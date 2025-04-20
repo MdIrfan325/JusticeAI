@@ -1,0 +1,235 @@
+{% extends "base.html" %}
+
+{% block title %}Ask a Legal Question - JusticeAI{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Category question data
+    const categoryQuestions = {
+        {% for category, questions in categories_data.items() %}
+        "{{ category }}": [
+            {% for question in questions.keys() %}
+            "{{ question }}",
+            {% endfor %}
+        ],
+        {% endfor %}
+    };
+
+    // Function to load questions based on selected category
+    function loadCategoryQuestions() {
+        const category = document.getElementById('category').value;
+        const questionsDiv = document.getElementById('categoryQuestions');
+        const suggestionsList = document.getElementById('questionSuggestions');
+        
+        // Clear previous suggestions
+        suggestionsList.innerHTML = '';
+        
+        if (category === "All Categories") {
+            questionsDiv.style.display = "none";
+            return;
+        }
+        
+        // Get questions for this category
+        const questions = categoryQuestions[category] || [];
+        
+        if (questions.length > 0) {
+            // Add each question as a suggestion
+            questions.forEach(question => {
+                const item = document.createElement('button');
+                item.className = 'list-group-item list-group-item-action';
+                item.textContent = question;
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    document.getElementById('question').value = question;
+                    document.getElementById('questionForm').submit();
+                });
+                suggestionsList.appendChild(item);
+            });
+            
+            questionsDiv.style.display = "block";
+        } else {
+            questionsDiv.style.display = "none";
+        }
+    }
+    
+    // Set up event listener for category change
+    document.addEventListener('DOMContentLoaded', function() {
+        const categorySelect = document.getElementById('category');
+        categorySelect.addEventListener('change', loadCategoryQuestions);
+        
+        // Initialize on page load
+        loadCategoryQuestions();
+    });
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <h1>Ask a Legal Question</h1>
+        <p class="lead">Enter your question related to Indian law</p>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
+                <form method="POST" id="questionForm">
+                    <div class="mb-3">
+                        <label for="question" class="form-label">Your Question</label>
+                        <input type="text" class="form-control form-control-lg" id="question" name="question" placeholder="e.g., What are my rights as a tenant?" value="{{ question }}" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="category" class="form-label">Filter by category</label>
+                        <select class="form-select" id="category" name="category">
+                            {% for cat in categories %}
+                                <option value="{{ cat }}" {% if selected_category == cat %}selected{% endif %}>{{ cat }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div id="categoryQuestions" class="mb-3" style="display: none;">
+                        <label class="form-label">Possible questions in this category:</label>
+                        <div class="list-group" id="questionSuggestions">
+                            <!-- Suggestions will be populated via JavaScript -->
+                        </div>
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary">Submit Question</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Common Legal Topics -->
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">Common Legal Topics</h4>
+            </div>
+            <div class="card-body">
+                <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
+                    {% for sample in sample_questions %}
+                        <div class="col d-flex">
+                            <form method="POST" class="w-100">
+                                <input type="hidden" name="question" value="{{ sample.question }}">
+                                <input type="hidden" name="category" value="{{ sample.category }}">
+                                <button type="submit" class="btn btn-outline-secondary w-100 text-start h-100 d-flex flex-column">
+                                    <span class="text-primary fw-semibold mb-2">{{ sample.category }}:</span>
+                                    <span>{{ sample.question }}</span>
+                                </button>
+                            </form>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Answer Area -->
+{% if result %}
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">Answer</h4>
+            </div>
+            <div class="card-body">
+                {% if result.found %}
+                    <div class="mb-4">
+                        <h5>Q: {{ result.question }}</h5>
+                        <div class="text-content mt-3">
+                            {% set answer_points = result.answer.replace(". ", ".|").split("|") %}
+                            <ul>
+                                {% for point in answer_points %}
+                                    {% if point.strip() %}
+                                        <li>{{ point|nl2br }}</li>
+                                    {% endif %}
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    {% if result.category %}
+                        <p><strong>Category:</strong> {{ result.category }}</p>
+                    {% endif %}
+                    
+                    {% if result.similar_questions %}
+                        <h5 class="mt-4">Related questions you might want to ask:</h5>
+                        <ul class="list-group">
+                            {% for q in result.similar_questions %}
+                                <li class="list-group-item">
+                                    <form method="POST">
+                                        <input type="hidden" name="question" value="{{ q }}">
+                                        <button type="submit" class="btn btn-link text-decoration-none p-0">{{ q }}</button>
+                                    </form>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                    
+                    <div class="text-muted mt-3">
+                        <small>Similarity score: {{ (result.similarity * 100)|int }}%</small>
+                    </div>
+                    
+                {% else %}
+                    <div class="alert alert-info">
+                        <h5>Sorry, I couldn't find a specific answer to:</h5>
+                        <p>"{{ result.question }}"</p>
+                        
+                        {% if result.similar_questions %}
+                            <h5 class="mt-3">You might want to try these related questions instead:</h5>
+                            <ul class="list-group mt-2">
+                                {% for q in result.similar_questions %}
+                                    <li class="list-group-item">
+                                        <form method="POST">
+                                            <input type="hidden" name="question" value="{{ q }}">
+                                            <button type="submit" class="btn btn-link text-decoration-none p-0">{{ q }}</button>
+                                        </form>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p class="mt-3">
+                                Try rephrasing your question or check the Learn Legal Terms tab for more information on common legal concepts.
+                            </p>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">How It Works</h4>
+            </div>
+            <div class="card-body">
+                <p>Welcome to the Legal Question Assistant!</p>
+                <p>You can ask questions about Indian law by typing in the field above or by clicking on one of the common legal topics.</p>
+                
+                <h5 class="mt-3">Example questions:</h5>
+                <ul>
+                    <li>What are my rights as a tenant?</li>
+                    <li>How do I file a consumer complaint?</li>
+                    <li>What is the cooling-off period for online purchases?</li>
+                    <li>What should I check before signing an employment contract?</li>
+                </ul>
+                
+                <p class="mt-3">The system searches through our database of legal information specific to Indian law and returns the most relevant answer.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,184 @@
+{% extends "base.html" %}
+
+{% block title %}JusticeAI - Indian Legal Assistant{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="row mb-5">
+    <div class="col-md-12">
+        <div class="card bg-primary bg-gradient text-white">
+            <div class="card-body p-5">
+                <div class="row align-items-center">
+                    <div class="col-lg-8 mb-4 mb-lg-0">
+                        <h1 class="display-4 fw-bold mb-4 animate__animated animate__fadeInUp">
+                            Your Personal Legal Assistant
+                        </h1>
+                        <p class="lead fs-4 mb-4 animate__animated animate__fadeInUp animate__delay-1s">
+                            Understand legal documents, get answers to common questions, and learn about Indian law - all in one place, completely offline.
+                        </p>
+                        <div class="d-flex flex-wrap gap-3 animate__animated animate__fadeInUp animate__delay-2s">
+                            <a href="{{ url_for('document_analysis') }}" class="btn btn-primary btn-lg">
+                                <i class="far fa-file-alt me-2"></i>Analyze Your Documents
+                            </a>
+                            <a href="{{ url_for('ask_question') }}" class="btn btn-outline-light btn-lg">
+                                <i class="far fa-question-circle me-2"></i>Ask a Legal Question
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 text-center">
+                        <div class="mb-4 animate__animated animate__fadeIn animate__delay-2s">
+                            <i class="fas fa-balance-scale fa-6x text-light opacity-75"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Features Section -->
+<div class="row mb-5">
+    <div class="col-12 mb-4 text-center">
+        <h2 class="page-title text-center">How JusticeAI Can Help You</h2>
+    </div>
+    
+    <div class="col-md-4 mb-4">
+        <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body text-center p-4 d-flex flex-column h-100">
+                <div class="rounded-circle bg-primary bg-opacity-10 p-3 d-inline-block mb-3 mx-auto">
+                    <i class="far fa-file-alt fa-3x text-primary"></i>
+                </div>
+                <h3 class="card-title h4">Document Analysis</h3>
+                <p class="card-text flex-grow-1">
+                    Upload your legal documents to get summaries, identify risky clauses, and understand complex legal language.
+                </p>
+                <div class="mt-3">
+                    <a href="{{ url_for('document_analysis') }}" class="btn btn-primary">
+                        Analyze Documents <i class="fas fa-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4 mb-4">
+        <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body text-center p-4 d-flex flex-column h-100">
+                <div class="rounded-circle bg-primary bg-opacity-10 p-3 d-inline-block mb-3 mx-auto">
+                    <i class="far fa-question-circle fa-3x text-primary"></i>
+                </div>
+                <h3 class="card-title h4">Ask a Question</h3>
+                <p class="card-text flex-grow-1">
+                    Get instant answers to common legal questions about Indian law, with references and explanations in simple language.
+                </p>
+                <div class="mt-3">
+                    <a href="{{ url_for('ask_question') }}" class="btn btn-primary">
+                        Ask Questions <i class="fas fa-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4 mb-4">
+        <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body text-center p-4 d-flex flex-column h-100">
+                <div class="rounded-circle bg-primary bg-opacity-10 p-3 d-inline-block mb-3 mx-auto">
+                    <i class="fas fa-book fa-3x text-primary"></i>
+                </div>
+                <h3 class="card-title h4">Learn Legal Terms</h3>
+                <p class="card-text flex-grow-1">
+                    Browse and learn about common legal terms used in Indian documents with definitions, examples, and Indian context.
+                </p>
+                <div class="mt-3">
+                    <a href="{{ url_for('learn_terms') }}" class="btn btn-primary">
+                        Explore Terms <i class="fas fa-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- About Section -->
+<div class="row mb-5">
+    <div class="col-md-12">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-4">
+                <div class="row align-items-center">
+                    <div class="col-lg-7 mb-4 mb-lg-0">
+                        <h2 class="page-title">About JusticeAI</h2>
+                        <p class="lead">
+                            JusticeAI is designed to help Indian users navigate legal documents and understand basic legal concepts through technology.
+                        </p>
+                        <p>
+                            Our tool uses natural language processing (NLP) to analyze documents, extract key information, and provide answers to common legal questions related to Indian law context.
+                        </p>
+                        
+                        <h5 class="mt-4 mb-3"><i class="fas fa-check-circle text-success me-2"></i>Key features</h5>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <ul class="list-unstyled">
+                                    <li class="mb-2"><i class="fas fa-check text-primary me-2"></i> Document parsing and OCR</li>
+                                    <li class="mb-2"><i class="fas fa-check text-primary me-2"></i> Text summarization</li>
+                                    <li class="mb-2"><i class="fas fa-check text-primary me-2"></i> Risk clause identification</li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <ul class="list-unstyled">
+                                    <li class="mb-2"><i class="fas fa-check text-primary me-2"></i> Legal question answering</li>
+                                    <li class="mb-2"><i class="fas fa-check text-primary me-2"></i> Legal terms dictionary</li>
+                                    <li class="mb-2"><i class="fas fa-check text-primary me-2"></i> Indian law context</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-5">
+                        <div class="card bg-light border-0">
+                            <div class="card-body p-4">
+                                <h5 class="d-flex align-items-center mb-3">
+                                    <i class="fas fa-shield-alt text-primary me-2"></i> Privacy Commitment
+                                </h5>
+                                <p>All processing happens <strong>locally on the server</strong>. Your documents and questions are <strong>not sent to any external services</strong>.</p>
+                                <hr>
+                                <h5 class="d-flex align-items-center mb-3">
+                                    <i class="fas fa-info-circle text-primary me-2"></i> Disclaimer
+                                </h5>
+                                <p class="small text-muted mb-0">JusticeAI is meant as a helpful tool and not as professional legal advice. Always consult a qualified legal professional for important matters.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Start -->
+<div class="row">
+    <div class="col-12 mb-4 text-center">
+        <h2 class="page-title text-center">Ready to Get Started?</h2>
+    </div>
+    
+    <div class="col-md-12">
+        <div class="card bg-primary text-white">
+            <div class="card-body p-4 text-center">
+                <p class="lead mb-4">
+                    Choose one of our main features to begin exploring JusticeAI
+                </p>
+                <div class="d-flex flex-wrap justify-content-center gap-3">
+                    <a href="{{ url_for('document_analysis') }}" class="btn btn-light btn-lg">
+                        <i class="far fa-file-alt me-2"></i>Analyze Documents
+                    </a>
+                    <a href="{{ url_for('ask_question') }}" class="btn btn-light btn-lg">
+                        <i class="far fa-question-circle me-2"></i>Ask Questions
+                    </a>
+                    <a href="{{ url_for('learn_terms') }}" class="btn btn-light btn-lg">
+                        <i class="fas fa-book me-2"></i>Learn Terms
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

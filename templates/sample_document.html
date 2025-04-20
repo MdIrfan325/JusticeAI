@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block title %}Sample Document - JusticeAI{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <h1 class="page-title">Sample Employment Agreement</h1>
+        <p class="lead">This is a sample legal document you can use to test the document analysis features</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12 mb-4">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header d-flex align-items-center justify-content-between">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-file-contract me-2 text-primary"></i>
+                    <h4 class="mb-0">Sample Document</h4>
+                </div>
+                <div>
+                    <button class="btn btn-outline-primary me-2" onclick="copyDocument()">
+                        <i class="fas fa-copy me-2"></i>Copy Text
+                    </button>
+                    <a href="{{ url_for('document_analysis') }}" class="btn btn-primary">
+                        <i class="fas fa-search me-2"></i>Analyze
+                    </a>
+                </div>
+            </div>
+            <div class="card-body p-4">
+                <div class="alert alert-info mb-4">
+                    <div class="d-flex">
+                        <div class="me-3"><i class="fas fa-info-circle fa-2x text-primary"></i></div>
+                        <div>
+                            <h5>About This Document</h5>
+                            <p class="mb-0">This is a sample employment agreement containing various clauses that the JusticeAI system can detect and analyze. You can download this document and upload it to the Document Analysis tool to see how the system identifies risky clauses and provides summaries.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="text-content border p-4 bg-light">
+                    <pre style="white-space: pre-wrap; word-wrap: break-word; font-family: monospace;">{{ document_content }}</pre>
+                </div>
+                
+                <!-- Hidden textarea for easy copying -->
+                <textarea id="document-text" style="position: absolute; left: -9999px; top: 0;" readonly>{{ document_content }}</textarea>
+                
+                <div class="mt-4 text-center">
+                    <a href="{{ url_for('document_analysis') }}" class="btn btn-primary btn-lg">
+                        <i class="fas fa-search me-2"></i>Analyze This Document
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function copyDocument() {
+        try {
+            // Use the hidden textarea for copying
+            const textarea = document.getElementById('document-text');
+            textarea.select();
+            document.execCommand('copy');
+            
+            // Show success message
+            const button = document.querySelector('button.btn-outline-primary');
+            const originalText = button.innerHTML;
+            button.innerHTML = '<i class="fas fa-check me-2"></i>Copied!';
+            button.classList.remove('btn-outline-primary');
+            button.classList.add('btn-success');
+            
+            // Reset button after 2 seconds
+            setTimeout(() => {
+                button.innerHTML = originalText;
+                button.classList.remove('btn-success');
+                button.classList.add('btn-outline-primary');
+            }, 2000);
+        } catch (err) {
+            console.error('Error copying text: ', err);
+            alert('Could not copy text. Please select and copy manually.');
+        }
+    }
+</script>
+{% endblock %}

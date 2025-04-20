@@ -1,0 +1,252 @@
+{% extends "base.html" %}
+
+{% block title %}Document Analysis - JusticeAI{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <h1 class="page-title">Document Analysis</h1>
+        <p class="lead">Upload a legal document to get a summary and risk assessment</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-7 mb-4">
+        <!-- Upload Card -->
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header d-flex align-items-center">
+                <i class="fas fa-file-upload me-2 text-primary"></i>
+                <h4 class="mb-0">Upload Document</h4>
+            </div>
+            <div class="card-body p-4">
+                <form method="POST" enctype="multipart/form-data" class="mb-4">
+                    <div class="mb-4">
+                        <div class="upload-area p-5 border border-dashed rounded-3 bg-light text-center mb-3" 
+                             onclick="document.getElementById('file').click()" 
+                             style="cursor: pointer;">
+                            <i class="fas fa-cloud-upload-alt fa-3x mb-3 text-primary"></i>
+                            <h5>Drag & drop a file here or click to browse</h5>
+                            <p class="text-muted mb-0">Supported formats: PDF, Images, and TXT files</p>
+                        </div>
+                        <input type="file" class="form-control d-none" id="file" name="file" 
+                               accept=".pdf,.png,.jpg,.jpeg,.tif,.tiff,.txt" required>
+                    </div>
+                    
+                    <div class="selected-file mb-4 d-none" id="selectedFileInfo">
+                        <div class="card bg-light">
+                            <div class="card-body d-flex align-items-center">
+                                <i class="fas fa-file-alt fa-2x text-primary me-3"></i>
+                                <div>
+                                    <h6 class="mb-1" id="selectedFileName">filename.pdf</h6>
+                                    <p class="mb-0 text-muted small" id="selectedFileSize">0 KB</p>
+                                </div>
+                                <button type="button" class="btn btn-sm btn-outline-danger ms-auto" 
+                                        onclick="clearFileSelection()">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-bolt me-2"></i>Analyze Document
+                        </button>
+                    </div>
+                </form>
+                
+                <div class="alert alert-info d-flex align-items-center">
+                    <i class="fas fa-info-circle fa-lg me-3"></i>
+                    <div>
+                        <strong>Privacy Note:</strong> Your document is processed locally on the server and is not sent to any external services.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-5 mb-4">
+        <!-- How It Works Card -->
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header d-flex align-items-center">
+                <i class="fas fa-magic me-2 text-primary"></i>
+                <h4 class="mb-0">How It Works</h4>
+            </div>
+            <div class="card-body p-4">
+                <div class="mb-4">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center me-3" 
+                             style="width: 40px; height: 40px;">
+                            <span>1</span>
+                        </div>
+                        <h5 class="mb-0">Document Processing</h5>
+                    </div>
+                    <p class="ms-5 ps-2">We extract text from your document using OCR technology if needed.</p>
+                </div>
+                
+                <div class="mb-4">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center me-3" 
+                             style="width: 40px; height: 40px;">
+                            <span>2</span>
+                        </div>
+                        <h5 class="mb-0">Content Summarization</h5>
+                    </div>
+                    <p class="ms-5 ps-2">Our AI summarizes key points to help you understand the document quickly.</p>
+                </div>
+                
+                <div class="mb-4">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center me-3" 
+                             style="width: 40px; height: 40px;">
+                            <span>3</span>
+                        </div>
+                        <h5 class="mb-0">Risk Assessment</h5>
+                    </div>
+                    <p class="ms-5 ps-2">We identify and highlight potentially risky clauses:</p>
+                    <div class="ms-5 ps-2">
+                        <div class="d-flex align-items-center mb-2">
+                            <span class="high-risk me-2">Sample text</span>
+                            <span class="text-muted">High risk terms</span>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <span class="medium-risk me-2">Sample text</span>
+                            <span class="text-muted">Medium risk terms</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    <strong>Disclaimer:</strong> This analysis is meant as a helpful tool and not as professional legal advice. Always consult a qualified legal professional for important matters.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Example Results Section -->
+<div class="row">
+    <div class="col-md-12 mb-4">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header d-flex align-items-center">
+                <i class="fas fa-star me-2 text-primary"></i>
+                <h4 class="mb-0">What You'll Get</h4>
+            </div>
+            <div class="card-body p-4">
+                <div class="row">
+                    <div class="col-md-4 mb-4 mb-md-0">
+                        <div class="card h-100">
+                            <div class="card-body text-center">
+                                <div class="mb-3">
+                                    <i class="fas fa-align-left fa-3x text-primary opacity-75"></i>
+                                </div>
+                                <h5>Full Text Extraction</h5>
+                                <p class="text-muted">Complete text extracted from your document, regardless of format.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-4 mb-md-0">
+                        <div class="card h-100">
+                            <div class="card-body text-center">
+                                <div class="mb-3">
+                                    <i class="fas fa-file-contract fa-3x text-primary opacity-75"></i>
+                                </div>
+                                <h5>Document Summary</h5>
+                                <p class="text-muted">Concise summary highlighting the key points of your document.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card h-100">
+                            <div class="card-body text-center">
+                                <div class="mb-3">
+                                    <i class="fas fa-exclamation-triangle fa-3x text-primary opacity-75"></i>
+                                </div>
+                                <h5>Risk Analysis</h5>
+                                <p class="text-muted">Identification of potentially risky clauses that need attention.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Add event listener for file input
+    document.getElementById('file').addEventListener('change', function(e) {
+        const fileInfo = document.getElementById('selectedFileInfo');
+        const fileName = document.getElementById('selectedFileName');
+        const fileSize = document.getElementById('selectedFileSize');
+        
+        if (this.files && this.files[0]) {
+            const file = this.files[0];
+            
+            // Display file info
+            fileName.textContent = file.name;
+            fileSize.textContent = formatFileSize(file.size);
+            fileInfo.classList.remove('d-none');
+        }
+    });
+    
+    // Handle drag and drop functionality
+    const uploadArea = document.querySelector('.upload-area');
+    
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        uploadArea.addEventListener(eventName, preventDefaults, false);
+    });
+    
+    function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+    
+    ['dragenter', 'dragover'].forEach(eventName => {
+        uploadArea.addEventListener(eventName, highlight, false);
+    });
+    
+    ['dragleave', 'drop'].forEach(eventName => {
+        uploadArea.addEventListener(eventName, unhighlight, false);
+    });
+    
+    function highlight() {
+        uploadArea.classList.add('bg-light-hover');
+    }
+    
+    function unhighlight() {
+        uploadArea.classList.remove('bg-light-hover');
+    }
+    
+    uploadArea.addEventListener('drop', handleDrop, false);
+    
+    function handleDrop(e) {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        
+        if (files.length) {
+            document.getElementById('file').files = files;
+            
+            // Trigger change event
+            const event = new Event('change', { bubbles: true });
+            document.getElementById('file').dispatchEvent(event);
+        }
+    }
+    
+    // Function to clear file selection
+    function clearFileSelection() {
+        document.getElementById('file').value = '';
+        document.getElementById('selectedFileInfo').classList.add('d-none');
+    }
+    
+    // Function to format file size
+    function formatFileSize(bytes) {
+        if (bytes < 1024) return bytes + ' bytes';
+        else if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+        else return (bytes / 1048576).toFixed(1) + ' MB';
+    }
+</script>
+{% endblock %}

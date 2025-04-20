@@ -1,0 +1,209 @@
+{% extends "base.html" %}
+
+{% block title %}Learn Legal Terms - JusticeAI{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <h1 class="page-title">Learn Indian Legal Terms</h1>
+        <p class="lead">Browse and search common legal terms and concepts used in Indian law</p>
+    </div>
+</div>
+
+<!-- Search and Filter -->
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-4">
+                <form method="GET" action="{{ url_for('learn_terms') }}" class="row g-3" id="searchForm">
+                    <div class="col-md-6">
+                        <label for="search" class="form-label">Search Terms</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light">
+                                <i class="fas fa-search text-primary"></i>
+                            </span>
+                            <input type="text" class="form-control" id="search" name="search" 
+                                placeholder="Search by keyword..." value="{{ search_term }}">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="category" class="form-label">Category</label>
+                        <select class="form-select" id="category" name="category">
+                            {% for cat in term_categories %}
+                                <option value="{{ cat }}" {% if selected_category == cat %}selected{% endif %}>{{ cat }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-2 d-flex align-items-end">
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-filter me-2"></i>Apply
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Popular Categories -->
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header d-flex align-items-center">
+                <i class="fas fa-tags me-2 text-primary"></i>
+                <h5 class="mb-0">Popular Categories</h5>
+            </div>
+            <div class="card-body p-3">
+                <div class="d-flex flex-wrap gap-2">
+                    {% for cat in term_categories %}
+                        {% if cat != "All Categories" %}
+                            <a href="{{ url_for('learn_terms', category=cat) }}" 
+                               class="badge {% if selected_category == cat %}bg-primary{% else %}bg-light text-dark{% endif %} 
+                                      text-decoration-none p-2">
+                                {{ cat }}
+                            </a>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Terms List (Left Side) -->
+    <div class="col-md-4 mb-4">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header d-flex align-items-center justify-content-between">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-book me-2 text-primary"></i>
+                    <h5 class="mb-0">Legal Terms</h5>
+                </div>
+                {% if terms %}
+                    <span class="badge bg-primary">{{ terms|length }} terms</span>
+                {% endif %}
+            </div>
+            <div class="card-body p-0">
+                <div class="list-group list-group-flush" style="max-height: 600px; overflow-y: auto;">
+                    {% if terms %}
+                        {% for term in terms %}
+                            <a href="{{ url_for('learn_terms', search=search_term, category=selected_category, term=term) }}" 
+                               class="list-group-item list-group-item-action d-flex align-items-center py-3 px-4 {% if selected_term == term %}active{% endif %}">
+                                <div>
+                                    {{ term }}
+                                </div>
+                                <i class="fas fa-chevron-right ms-auto {% if selected_term == term %}text-white{% else %}text-muted{% endif %}"></i>
+                            </a>
+                        {% endfor %}
+                    {% else %}
+                        <div class="list-group-item text-center p-4">
+                            <i class="fas fa-search fa-2x text-muted mb-3"></i>
+                            <p class="text-muted">No terms found matching your criteria</p>
+                            <a href="{{ url_for('learn_terms') }}" class="btn btn-sm btn-outline-primary">
+                                Clear Filters
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Term Details (Right Side) -->
+    <div class="col-md-8 mb-4">
+        <div class="card border-0 shadow-sm h-100">
+            {% if term_details %}
+                <div class="card-header d-flex align-items-center justify-content-between bg-primary text-white">
+                    <h5 class="mb-0">{{ selected_term }}</h5>
+                    <span class="badge bg-white text-primary">{{ term_details.category }}</span>
+                </div>
+                <div class="card-body p-4">
+                    <div class="mb-4">
+                        <h5 class="d-flex align-items-center">
+                            <i class="fas fa-info-circle me-2 text-primary"></i>Definition
+                        </h5>
+                        <div class="text-content p-3">
+                            {{ term_details.definition }}
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <h5 class="d-flex align-items-center">
+                            <i class="fas fa-lightbulb me-2 text-primary"></i>Example Clause
+                        </h5>
+                        <div class="text-content p-3">
+                            {{ term_details.example }}
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <h5 class="d-flex align-items-center">
+                            <i class="fas fa-map-marker-alt me-2 text-primary"></i>Indian Law Context
+                        </h5>
+                        <div class="text-content p-3">
+                            {{ term_details.indian_context }}
+                        </div>
+                    </div>
+                    
+                    <!-- Related Terms (placeholder for future enhancement) -->
+                    <div class="alert alert-light mt-4">
+                        <div class="d-flex">
+                            <div class="me-3 text-primary">
+                                <i class="fas fa-lightbulb fa-2x"></i>
+                            </div>
+                            <div>
+                                <h6>Legal Advice Disclaimer</h6>
+                                <p class="mb-0 small">This information is for educational purposes only and does not constitute legal advice. Always consult with a qualified legal professional for advice specific to your situation.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <div class="card-header d-flex align-items-center">
+                    <i class="fas fa-book me-2 text-primary"></i>
+                    <h5 class="mb-0">Term Details</h5>
+                </div>
+                <div class="card-body text-center p-5">
+                    <div class="py-5">
+                        <i class="fas fa-book-open fa-4x text-muted opacity-50 mb-4"></i>
+                        <h4 class="text-muted">Select a legal term from the list</h4>
+                        <p class="text-muted mb-4">Learn more about legal terminology and their applications in Indian law</p>
+                        
+                        {% if not terms %}
+                            <a href="{{ url_for('learn_terms') }}" class="btn btn-outline-primary">
+                                <i class="fas fa-undo me-2"></i>Reset Filters
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Auto-submit form when category changes
+        document.getElementById('category').addEventListener('change', function() {
+            document.getElementById('searchForm').submit();
+        });
+        
+        // Animate term when selected
+        const termLinks = document.querySelectorAll('.list-group-item-action');
+        termLinks.forEach(link => {
+            link.addEventListener('mouseenter', function() {
+                if (!this.classList.contains('active')) {
+                    this.classList.add('bg-light');
+                }
+            });
+            link.addEventListener('mouseleave', function() {
+                if (!this.classList.contains('active')) {
+                    this.classList.remove('bg-light');
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}
